@@ -9,8 +9,8 @@ function Search({ onSearch }) {
     }
 
   return (
-    <div class="w-full max-w-md">
-      <form class="flex items-center" onSubmit={handleSearch}>
+    <div className="w-full max-w-md">
+      <form className="flex items-center" onSubmit={handleSearch}>
         <input
           type="text"
           placeholder="Search..."
