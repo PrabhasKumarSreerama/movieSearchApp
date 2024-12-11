@@ -16,8 +16,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [favourite, setFavourite] = useState([]);
-  const [curPage, setCurPage] = useState([]);
-  
+  const [curPage, setCurPage] = useState(1);
+
   const handleSearch = useCallback(
     async (movieName) => {
       try {
@@ -31,23 +31,23 @@ function App() {
     },
     [filter]
   );
-  
+
   useEffect(() => {
     const loadDefaultMovies = async () => {
       await handleSearch("anime");
     };
     loadDefaultMovies();
   }, [handleSearch]);
-  
+
   const handleFilter = (filter) => {
     setFilter(filter);
   };
-  
+
   const moviesPerPage = 8;
   const lastMovieIndex = curPage * moviesPerPage;
   const firstMovieIndex = lastMovieIndex - moviesPerPage;
   const curMovies = movies.slice(firstMovieIndex, lastMovieIndex);
-  
+
   const totalPages = Math.ceil(movies.length / moviesPerPage);
 
   const paginationArr = [];
@@ -84,22 +84,25 @@ function App() {
     <>
       <Router>
         <header className="sticky top-0 z-10 bg-green-100 shadow-md p-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-800">
-              For You Movie Finder
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">
+              <Link to="/">For You Movie Finder</Link>
             </h1>
-            <Search onSearch={handleSearch} />
-            <Filter onFilter={handleFilter} />
-            <Link to="/favourites">
+            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
+              <Search onSearch={handleSearch} />
+              <Filter onFilter={handleFilter} />
+            </div>
+            <Link to="/favourites" className="flex-shrink-0">
               <button
                 type="button"
-                className="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                className="text-white bg-gradient-to-r from-lime-500 via-lime-600 to-lime-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all"
               >
                 My Favourites
               </button>
             </Link>
           </div>
         </header>
+
         <main>
           <Routes>
             <Route
