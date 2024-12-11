@@ -30,7 +30,7 @@ function App() {
         setLoading(false);
       }
     },
-    [filter]
+    []
   );
 
   useEffect(() => {
@@ -38,15 +38,16 @@ function App() {
       await handleSearch("anime");
     };
     if (searchVal.trim() === "") loadDefaultMovies();
-  }, [handleSearch]);
+  }, [handleSearch, searchVal]);
 
   const handleSearchVal = (val) => {
     setSearchVal(val);
   };
 
-  const handleFilter = (filter) => {
-    setFilter(filter);
-    handleSearch(searchVal, filter);
+  const handleFilter = (fil) => {
+    setFilter(fil);
+    console.log(filter);
+    handleSearch(searchVal, fil);
   };
 
   const moviesPerPage = 8;
