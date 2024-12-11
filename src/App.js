@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import "./App.css";
 import Favourite from "./Components/Header/Favourite";
-import Filter from "./Components/Header/Filter";
+import FilterComp from "./Components/Header/Filter";
 import Search from "./Components/Header/Search";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { SearchMovie } from "./api";
@@ -17,11 +16,13 @@ function App() {
   const [filter, setFilter] = useState("");
   const [favourite, setFavourite] = useState([]);
   const [curPage, setCurPage] = useState(1);
+  const [searchVal, setSearchVal] = useState("");
 
   const handleSearch = useCallback(
-    async (movieName) => {
+    async (movieName, fil) => {
+      setLoading(true);
       try {
-        const data = await SearchMovie(movieName);
+        const data = await SearchMovie(movieName, fil);
         setMovies(data.Search || []);
       } catch (error) {
         setError(error.message);
@@ -36,11 +37,16 @@ function App() {
     const loadDefaultMovies = async () => {
       await handleSearch("anime");
     };
-    loadDefaultMovies();
+    if (searchVal.trim() === "") loadDefaultMovies();
   }, [handleSearch]);
+
+  const handleSearchVal = (val) => {
+    setSearchVal(val);
+  };
 
   const handleFilter = (filter) => {
     setFilter(filter);
+    handleSearch(searchVal, filter);
   };
 
   const moviesPerPage = 8;
@@ -72,10 +78,6 @@ function App() {
     setFavourite(favourite.filter((fav) => fav.imdbID !== id));
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-
   if (error) {
     return <Error message={error} />;
   }
@@ -89,8 +91,11 @@ function App() {
               <Link to="/">For You Movie Finder</Link>
             </h1>
             <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-              <Search onSearch={handleSearch} />
-              <Filter onFilter={handleFilter} />
+              <Search
+                onSearch={handleSearch}
+                handleSearchVal={handleSearchVal}
+              />
+              <FilterComp onFilter={handleFilter} />
             </div>
             <Link to="/favourites" className="flex-shrink-0">
               <button
@@ -109,6 +114,7 @@ function App() {
               path="/"
               element={
                 <>
+                  {loading && <Loading />}
                   <Movies movies={curMovies} />
                   <div className="flex justify-center items-center space-x-2 mt-4">
                     {paginationArr.map((page) => (
